@@ -1,0 +1,25 @@
+task: spectral_faithfulness_disruption
+dataset_path: json
+dataset_kwargs:
+  data_files:
+    test: lm_eval/tasks/spectral_faithfulness/synthetic_data/disruption_samples.jsonl
+output_type: generate_until
+doc_to_text: !function utils.format_disruption_prompt
+doc_to_target: "{{label}}"
+generation_kwargs:
+  max_gen_toks: 1024
+  temperature: 0.0
+process_results: !function utils.judge_tone_shift
+metric_list:
+  - metric: detection_accuracy
+    aggregation: mean
+    higher_is_better: true
+  - metric: false_positive_rate
+    aggregation: mean
+    higher_is_better: false
+  - metric: disruption_magnitude
+    aggregation: mean
+    higher_is_better: false
+metadata:
+  version: 0.2
+  num_fewshot: 0
